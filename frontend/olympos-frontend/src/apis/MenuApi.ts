@@ -2,10 +2,11 @@ import DefaultAxios from '@/apis/DefaultApi';
 import { ACCESS_TOKEN } from '@/functions/AccessToken';
 import { push } from 'notivue';
 import { API_CODE } from '@/constants/ApiCodeConstant';
+import type { GetProductGroupListParams, GetProductGroupListResponse, GetProductListParams, GetProductListResponse } from '@/types/MenuTypes';
 
 const MenuApi = {
-    getTabList(params){
-        return DefaultAxios.get('/get-group-list', {
+    async getProductGroupList(params: GetProductGroupListParams): Promise<GetProductGroupListResponse> {
+        return await DefaultAxios.get('/get-group-list', {
             params,
             headers: {
                 Authorization: ACCESS_TOKEN()
@@ -23,8 +24,8 @@ const MenuApi = {
             throw new Error(API_CODE[error.message]);
         })
     },
-    getProductList(params){
-        return DefaultAxios.get('/get-product-list', {
+    async getProductList(params: GetProductListParams): Promise<GetProductListResponse>{
+        return await DefaultAxios.get('/get-product-list', {
             params,
             headers: {
                 Authorization: ACCESS_TOKEN()

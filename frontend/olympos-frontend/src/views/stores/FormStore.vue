@@ -52,7 +52,7 @@ import router from '@/router';
 import { useRoute } from 'vue-router'
 
 import StoreApi from '@/apis/StoreApi';
-import { type FormStoreBody, type FormStore } from '@/types/StoreTypes';
+import { type CreateStoreRequest } from '@/types/StoreTypes';
 import { Notivue, Notification, push } from 'notivue';
 
 const route = useRoute();
@@ -134,6 +134,14 @@ const validate = ()=>{
     );
 }
 
+
+export interface FormStore {
+    storeName: string | undefined;
+    storePhoneNumber: string | undefined;
+    storeAddress: string | undefined;
+    storeOwner: string | undefined;
+    storeTableCnt: number | undefined;
+}
 const formCreateStore: Ref<FormStore> = ref({
     storeName: undefined,
     storePhoneNumber: undefined,
@@ -169,7 +177,7 @@ const handleStore = ()=>{
         });
     }
     else {
-        const params: FormStoreBody = {
+        const params: CreateStoreRequest = {
             name: formCreateStore.value.storeName as string,
             tel_num: formCreateStore.value.storePhoneNumber as string,
             address: formCreateStore.value.storeAddress as string,
@@ -186,7 +194,7 @@ const handleStore = ()=>{
         }
     }
 }
-const createStore = (params: FormStoreBody)=>{
+const createStore = (params: CreateStoreRequest)=>{
     StoreApi.createStore(params)
     .then(()=>{
         push.success({
@@ -210,7 +218,7 @@ const createStore = (params: FormStoreBody)=>{
         increaseButtonKey();
     });
 }
-const editStore = (params: FormStoreBody)=>{
+const editStore = (params: CreateStoreRequest)=>{
     StoreApi.editStoreInfo(params)
     .then(()=>{
         push.success({

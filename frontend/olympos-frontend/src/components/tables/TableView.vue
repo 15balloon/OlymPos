@@ -19,21 +19,29 @@
                 </tr>
             </thead>
             <tbody id="tbody">
-                <tr v-for="(item, index) in rowData" :key="index">
-                    <td v-for="header in colDef" :key="header.value">
-                        <template v-if="header.value === 'number'">
-                            {{ index + 1 }}
-                        </template>
-
-                        <component v-else-if="header.extend === true" :is="item[header.value].component" @click="buttonFunction?.(item[header.value].slot, item, emit)">
-                            <slot>{{item[header.value].slot}}</slot>
-                        </component>
+                <template v-if="rowData">
+                    <tr v-for="(item, index) in rowData" :key="index">
+                        <td v-for="header in colDef" :key="header.value">
+                            <template v-if="header.value === 'number'">
+                                {{ index + 1 }}
+                            </template>
+    
+                            <component v-else-if="header.extend === true" :is="item[header.value].component" @click="buttonFunction?.(item[header.value].slot, item, emit)">
+                                <slot>{{item[header.value].slot}}</slot>
+                            </component>
+                            
+                            <template v-else>
+                                {{ item[header.value] }}
+                            </template>
+                        </td>
+                    </tr>
+                </template>
+                <template v-else>
+                    <div class="empty-table">
+                        조회된 데이터가 없습니다.
+                    </div>
                         
-                        <template v-else>
-                            {{ item[header.value] }}
-                        </template>
-                    </td>
-                </tr>
+                </template>
             </tbody>
         </table>
     </div>
@@ -77,5 +85,11 @@ tbody tr {
 }
 tbody tr:hover {
     background-color: var(--main-mute-1);
+}
+.empty-table {
+    text-align: center;
+    font-size: 12px;
+    margin: 40px 0;
+    color: var(--main-gray-1);
 }
 </style>

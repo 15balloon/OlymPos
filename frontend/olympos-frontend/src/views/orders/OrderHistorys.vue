@@ -21,7 +21,6 @@
 
                 <template #table>
                     <Table :col-def="tableHeader" :row-data="rowData"></Table>
-                    <EmptyTableView v-if="rowData.length === 0" />
                 </template>
             </ContentView>
         </div>
@@ -34,10 +33,9 @@ import { ref, type Ref, inject } from 'vue';
 import { Notivue, Notification, push } from 'notivue';
 import ContentView from '@/components/contents/ContentView.vue';
 import Table from '@/components/tables/TableView.vue';
-import EmptyTableView from '@/components/tables/EmptyTableView.vue';
 import type { ColDef, RowData} from '@/types/TableTypes';
-import type { ResponseStores } from '@/types/StoreTypes';
-import type { ResponseOrders } from '@/types/OrderTypes';
+import type { GetStoreListResponse } from '@/types/StoreTypes';
+import type { Order } from '@/types/OrderTypes';
 import SelectWithTitle from '@/components/selects/SelectWithTitle.vue';
 import SelectDefault, { type SelectOptionList } from '@/components/selects/SelectDefault.vue';
 
@@ -61,7 +59,7 @@ const activeStoreId = ref<number | null>(null);
 const storeList: Ref<SelectOptionList[]> = ref([]);
 const getStoreList = ()=>{
     StoreApi.getStoreList()
-    .then((res: ResponseStores[])=>{
+    .then((res: GetStoreListResponse[])=>{
         storeList.value = res.map(e=>{
             return {
                 id: e.unique_store_info,
@@ -94,8 +92,8 @@ const getOrderHistoryList = ()=>{
         store_uid: activeStoreId.value as number
     }
     OrderHistoryApi.getOrderList(params)
-    .then((res:ResponseOrders[])=>{
-        rowData.value = res.map(e=>{
+    .then((res)=>{
+        rowData.value = res.map((e: Order)=>{
             e.order_date = momentPlungin.format(e.order_date);
             return e;
         });

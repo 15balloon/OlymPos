@@ -1,12 +1,12 @@
 import DefaultAxios from '@/apis/DefaultApi';
-import { type FormStoreBody, type StoreId } from '@/types/StoreTypes';
+import { type CreateStoreRequest, type GetStoreListResponse, type Store, type StoreIdRequest } from '@/types/StoreTypes';
 import { ACCESS_TOKEN } from '@/functions/AccessToken';
 import { push } from 'notivue';
 import { API_CODE } from '@/constants/ApiCodeConstant';
 
 const StoreApi = {
-    getStoreList(){
-        return DefaultAxios.get('/get-my-stores', {
+    async getStoreList(): Promise<GetStoreListResponse>{
+        return await DefaultAxios.get('/get-my-stores', {
             headers: {
                 Authorization: ACCESS_TOKEN()
             }
@@ -23,8 +23,8 @@ const StoreApi = {
             throw new Error(API_CODE[error.message]);
         })
     },
-    createStore(params: FormStoreBody){
-        return DefaultAxios.post('/add-store', params, {
+    async createStore(params: CreateStoreRequest): Promise<void>{
+        return await DefaultAxios.post('/add-store', params, {
             headers: {
                 Authorization: ACCESS_TOKEN()
             }
@@ -41,8 +41,8 @@ const StoreApi = {
             throw new Error(API_CODE[error.message]);
         })
     },
-    getStoreInfo(params: StoreId){
-        return DefaultAxios.get('/get-store-info', {
+    async getStoreInfo(params: StoreIdRequest): Promise<Store>{
+        return await DefaultAxios.get('/get-store-info', {
             params: params,
             headers: {
                 Authorization: ACCESS_TOKEN()
@@ -60,8 +60,8 @@ const StoreApi = {
             throw new Error(API_CODE[error.message]);
         })
     },
-    editStoreInfo(params: FormStoreBody){
-        return DefaultAxios.post('/change-store-info', params, {
+    async editStoreInfo(params: CreateStoreRequest): Promise<void> {
+        return await DefaultAxios.post('/change-store-info', params, {
             headers: {
                 Authorization: ACCESS_TOKEN()
             }
@@ -78,8 +78,8 @@ const StoreApi = {
             throw new Error(API_CODE[error.message]);
         })
     },
-    deleteStoreInfo(params: StoreId){
-        return DefaultAxios.post('/delete-store', params, {
+    async deleteStoreInfo(params: StoreIdRequest): Promise<void>{
+        return await DefaultAxios.post('/delete-store', params, {
             headers: {
                 Authorization: ACCESS_TOKEN()
             }

@@ -17,7 +17,6 @@
 
                 <template #table>
                     <Table :col-def="tableHeader" :row-data="rowData" :button-function="useButton" @refresh="getStoreList"></Table>
-                    <EmptyTableView v-if="rowData.length === 0" />
                 </template>
             </ContentView>
         </div>
@@ -35,7 +34,6 @@ import ContentView from '@/components/contents/ContentView.vue';
 import ButtonRectangle from '@/components/buttons/ButtonRectangle.vue';
 
 import Table from '@/components/tables/TableView.vue';
-import EmptyTableView from '@/components/tables/EmptyTableView.vue';
 import ButtonInTable from '@/components/buttons/ButtonInTable.vue';
 import type { ColDef, RowData} from '@/types/TableTypes';
 import {useButton} from '@/views/stores/StoreTableButton';

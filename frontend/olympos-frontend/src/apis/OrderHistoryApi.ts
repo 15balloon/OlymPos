@@ -2,11 +2,11 @@ import DefaultAxios from '@/apis/DefaultApi';
 import { ACCESS_TOKEN } from '@/functions/AccessToken';
 import { push } from 'notivue';
 import { API_CODE } from '@/constants/ApiCodeConstant';
-import type { StoreId } from '@/types/StoreTypes';
+import type { GetOrderListParams, GetOrderListResponse } from '@/types/OrderTypes';
 
 const OrderHistoryApi = {
-    getOrderList(params: StoreId){
-        return DefaultAxios.get('/get-order-list', {
+    async getOrderList(params: GetOrderListParams): Promise<GetOrderListResponse>{
+        return await DefaultAxios.get('/get-order-list', {
             params,
             headers: {
                 Authorization: ACCESS_TOKEN()

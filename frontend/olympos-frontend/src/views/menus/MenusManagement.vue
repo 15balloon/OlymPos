@@ -33,7 +33,6 @@
 
                 <template #table>
                     <Table :col-def="tableHeader" :row-data="rowData"></Table>
-                    <EmptyTableView v-if="rowData.length === 0" />
                 </template>
             </ContentViewWithTab>
         </div>
@@ -41,8 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, markRaw } from 'vue';
-import { type AxiosResponse } from 'axios';
+import { ref, markRaw, onBeforeMount } from 'vue';
 
 import { Notivue, Notification, push } from 'notivue';
 
@@ -53,15 +51,14 @@ import SelectDefault, { type SelectOptionList } from '@/components/selects/Selec
 import ButtonRectangle from '@/components/buttons/ButtonRectangle.vue';
 
 import Table from '@/components/tables/TableView.vue';
-import EmptyTableView from '@/components/tables/EmptyTableView.vue';
 import ButtonInTable from '@/components/buttons/ButtonInTable.vue';
 import TabDefault from '@/components/tab/TabDefault.vue';
 import type { ColDef, RowData} from '@/types/TableTypes';
-import type { ResponseStores } from '@/types/StoreTypes';
+import type { GetStoreListResponse } from '@/types/StoreTypes';
 
 import StoreApi from '@/apis/StoreApi';
 import MenuApi from '@/apis/MenuApi';
-import { type ResponseMenus } from '@/types/MenuTypes';
+import { type GetProductGroupListResponse, type ProductList, type ResponseMenus } from '@/types/MenuTypes';
 import router from '@/router';
 
 
@@ -80,12 +77,14 @@ const tableHeader: ColDef[] = [
 const rowData = ref<RowData<typeof ButtonInTable>[]>([]);
 
 
-
-const activeStoreId = ref<number | null>(null);
+onBeforeMount(()=>{
+    getStoreList();
+});
+const activeStoreId = ref<number>();
 const storeList = ref<SelectOptionList[]>([]);
 const getStoreList = ()=>{
     StoreApi.getStoreList()
-    .then((res: ResponseStores[])=>{
+    .then((res: GetStoreListResponse[])=>{
         storeList.value = res.map(e=>{
             return {
                 id: e.unique_store_info,
@@ -94,8 +93,10 @@ const getStoreList = ()=>{
         });
         if(storeList.value.length > 0){
             activeStoreId.value = storeList.value[0].id;
-            getTabList();
-            getProductList();
+            getProductGroupList()
+            .then(()=>{
+                getProductList();
+            });
         }
     })
     .catch(err=>{
@@ -105,16 +106,17 @@ const getStoreList = ()=>{
         });
     });
 }
-getStoreList();
 
 
 
-const tabList = ref([]);
-const getTabList = ()=>{
+
+const tabList = ref<GetProductGroupListResponse>([]);
+const tabModel = ref<number>(0);
+const getProductGroupList = async ()=>{
     const params = {
-        store_uid: activeStoreId.value
+        store_uid: activeStoreId.value as number
     }
-    MenuApi.getTabList(params)
+    await MenuApi.getProductGroupList(params)
     .then((res)=>{
         tabList.value = res;
     })
@@ -130,22 +132,19 @@ const getTabList = ()=>{
 
 const getProductList = ()=>{
     const params = {
-        store_uid: activeStoreId.value
+        group_uid: tabList.value[tabModel.value].unique_product_group
     }
     MenuApi.getProductList(params)
     .then((res)=>{
-        if(res.length === 0){
-            rowData.value = res;
-        }
-        else {
+        if(res.length > 0){
             const extendRow = {
                 detail: {component: ButtonInTable, slot: '상세 정보'},
                 delete: {component: ButtonInTable, slot: '삭제'},
             }
-            const result = res.map((e: AxiosResponse)=>{
+            const result = res.map((e: ProductList)=>{
                 return Object.assign(e, extendRow);
             });
-    
+
             rowData.value = markRaw(result);
         }
     })

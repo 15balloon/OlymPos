@@ -1,4 +1,4 @@
-export interface FormStoreBody {
+export interface CreateStoreRequest {
     store_uid?: number;
     name: string;
     owner: string;
@@ -7,15 +7,7 @@ export interface FormStoreBody {
     count: number;
 }
 
-export interface FormStore {
-    storeName: string | undefined;
-    storePhoneNumber: string | undefined;
-    storeAddress: string | undefined;
-    storeOwner: string | undefined;
-    storeTableCnt: number | undefined;
-}
-
-export interface StoreId {
+export interface StoreIdRequest {
     store_uid: number;
 }
 
@@ -24,7 +16,7 @@ export interface StoreInfo {
     storeName: String;
 }
 
-export interface ResponseStores {
+export interface Store {
     disable_date: null | string,
     last_modify_date: string,
     store_address: string,
@@ -35,3 +27,4 @@ export interface ResponseStores {
     unique_admin: number,
     unique_store_info: number
 }
+export type GetStoreListResponse = Store[];
