@@ -40,51 +40,51 @@ const router = createRouter({
         },
         {
             path: '/',
-            component: ()=>import('@/views/home/MainHome.vue'),
+            component: () => import('@/views/home/MainHome.vue'),
             redirect: '/store',
             children: [
                 {
                     path: '/store',
                     name: 'store',
-                    component: ()=>import('@/views/stores/StoresManagement.vue')
+                    component: () => import('@/views/stores/StoresManagement.vue')
                 },
                 {
                     path: '/store/form/:storeId?',
-                    component: ()=>import('@/views/stores/FormStore.vue')
+                    component: () => import('@/views/stores/FormStore.vue')
                 },
                 {
                     path: '/menu',
                     name: 'menu',
-                    component: ()=>import('@/views/menus/MenusManagement.vue'),
+                    component: () => import('@/views/menus/MenusManagement.vue'),
                 },
                 {
                     path: '/menu/group/:storeId?',
                     name: 'menuGroup',
-                    component: ()=>import('@/views/menus/MenuGroupManagement.vue'),
+                    component: () => import('@/views/menus/MenuGroupManagement.vue'),
                 },
                 {
                     path: '/order',
                     name: 'order',
-                    component: ()=>import('@/views/orders/OrdersManagement.vue')
+                    component: () => import('@/views/orders/OrdersManagement.vue')
                 },
                 {
                     path: '/order-history',
                     name: 'order-history',
-                    component: ()=>import('@/views/orders/OrderHistorys.vue')
+                    component: () => import('@/views/orders/OrderHistorys.vue')
                 },
                 {
                     path: '/sale',
                     name: 'sale',
-                    component: ()=>import('@/views/sales/SalesManagement.vue')
+                    component: () => import('@/views/sales/SalesManagement.vue')
                 },
             ],
-            beforeEnter: (to, from, next)=>{
+            beforeEnter: (to, from, next) => {
                 const accessToken = sessionStorage.getItem('access_token');
-                if(!!! accessToken){
-                    next('/login');
+                if (accessToken && !!accessToken) {
+                    next();
                 }
                 else {
-                    next();
+                    next('/login');
                 }
             }
         },

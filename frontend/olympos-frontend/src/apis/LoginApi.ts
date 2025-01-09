@@ -1,6 +1,7 @@
 import DefaultAxios from '@/apis/DefaultApi'
 import { push } from 'notivue';
 import { API_CODE } from '@/constants/ApiCodeConstant';
+import router from '@/router';
 
 interface LoginValue {
     userId: string;
@@ -8,7 +9,7 @@ interface LoginValue {
 }
 
 const LoginApi = {
-    doLogin(args: LoginValue){
+    async login(args: LoginValue) {
         const notification = push.promise({
             title: '로그인 중...',
             duration: undefined
@@ -18,21 +19,37 @@ const LoginApi = {
             user_id: args.userId,
             user_pwd: args.userPw
         }
-        return DefaultAxios.post('/admin-login', params)
-        .then(res=>{
-            if(res.data.code === 100 && res.data.result === "Success"){
-                return {accessToken: res.data.access_token};
-            }
-            else {
-                throw new Error(res.data.code);
+        return await DefaultAxios.post('/admin-login', params)
+            .then(res => {
+                if (res.data.code === 100 && res.data.result === "Success") {
+                    return { accessToken: res.data.access_token };
+                }
+                else {
+                    throw new Error(res.data.code);
+                }
+            })
+            .catch(err => {
+                notification.reject({
+                    title: API_CODE[err.message] || '로그인 실패',
+                    duration: undefined
+                });
+            });
+    },
+    async logout() {
+        return await DefaultAxios.post('/admin-logout', {}, {
+            headers: {
+                Authorization: `Bearer ${sessionStorage.getItem('access_token')}`
             }
         })
-        .catch(error=>{
-            notification.reject({
-                title: API_CODE[error.message] || '로그인 실패',
-                duration: undefined
-            });
-        });
+            .then(res => {
+                if (res.data.code === 100 && res.data.result === "Success") {
+                    sessionStorage.clear();
+                    router.push('/login');
+                }
+                else {
+                    throw new Error(res.data.code);
+                }
+            })
     }
 }
 export default LoginApi;
